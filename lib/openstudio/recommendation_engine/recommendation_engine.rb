@@ -23,11 +23,9 @@ module OpenStudio
       def initialize(model, path_to_measures)
         @model = model
         @path_to_measures = path_to_measures
-        
-        init
       end
 
-      def init
+      def check_measures
         measure_checks = Dir.glob("#{@path_to_measures}/**/recommendation.rb")
        
         applicable_measures = []
@@ -36,7 +34,7 @@ module OpenStudio
           require "#{File.expand_path(measure)}"
 
           measure_class_name = File.basename(File.expand_path("../..",measure))
-          puts "measure class name is: #{measure_class_name}"
+          puts "checking #{measure_class_name}"
 
           measure = Object.const_get(measure_class_name).new
           
@@ -54,7 +52,7 @@ module OpenStudio
         end
 
         applicable_measures_json = JSON.pretty_generate(applicable_measures)
-        puts applicable_measures_json
+        
         return applicable_measures_json
 
       end
