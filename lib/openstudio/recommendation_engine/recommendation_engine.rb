@@ -31,7 +31,6 @@ module OpenStudio
         measure_checks = Dir.glob("#{@path_to_measures}/**/recommendation.rb")
        
         puts "List of measures: #{measure_checks.inspect}"
-        results = []
         measure_checks.each do |measure|
           require "#{File.expand_path(measure)}"
 
@@ -44,18 +43,23 @@ module OpenStudio
           # recommendation engine ?
           #require "#{a.name}::MeasureApplciblitychere.new()."
           
+          applicable_measures = {}
+          
           if @model
             measure_check = Measure::MeasureApplicabilityChecker.new(@model)
-            measure_check.check_applicability  
+            result = measure_check.check_applicability 
+            if result
+              applicable_measures["measures"] = result
+            end 
           else
             raise "No model passed into the recommendation engine"
           end
           
-          
-          results << measure_check.result
         end
 
-        return results
+        applicable_measures_json = JSON.pretty_generate(applicable_measures)
+        
+        return applicable_measures_json
 
       end
 

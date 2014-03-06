@@ -15,7 +15,7 @@ Gem::Specification.new do |s|
   s.license = "LGPL"
 
   s.add_runtime_dependency("parallel")
-  s.add_runtime_dependency("active_support")
+  s.add_runtime_dependency("json_pure")
 
   s.required_ruby_version = '>= 1.8.7'
   
