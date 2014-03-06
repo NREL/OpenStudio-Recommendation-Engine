@@ -36,8 +36,8 @@ module OpenStudio
 
           measure_class_name = File.basename(File.expand_path("../..",measure))
           puts "measure class name is: #{measure_class_name}"
-          
-          m = measure_class_name.constantize.new
+
+          m = Object.const_get(measure_class_name).new
           puts m.inspect
           
           # recommendation engine ?

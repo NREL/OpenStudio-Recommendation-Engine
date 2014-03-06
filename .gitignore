@@ -1,2 +1,6 @@
 *.gem
 *.lock
+.idea
+.bundle
+.ruby-version
+/spec/reports
