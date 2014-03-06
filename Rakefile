@@ -6,7 +6,7 @@ require "rspec/core/rake_task"
 
 $LOAD_PATH.unshift File.expand_path("../lib", __FILE__)
 require "openstudio/recommendation_engine/recommendation_engine"
-require "lib/openstudio/recommendation_engine/version"
+require "openstudio/recommendation_engine/version"
 
 task :gem => :build
 desc "build gem"

@@ -1,0 +1,41 @@
+<measure>
+  <name>Add Daylight Sensors to Control Lighting in Perimeter Zones</name>
+  <uid>695f8d7c-2d35-4f6b-8da9-a1d194847058</uid>
+  <version_id>22606751-01ac-4e6a-8c39-6fe710ffb6bb</version_id>
+  <description>This measure involves the installation of photocells to sense the space lighting level and control the overhead lighting in the perimeter zones to maintain a constant light level in the space. This measure also includes replacing the overhead lighting with dimmable ballasts, since dimmable ballasts are necessary to realize energy savings. The lighting next to the exterior windows needs to be on a separate circuit from the other lighting, so that these lights can be controlled separate from the interior zone lights. The design of a daylight harvesting system should account for sensor location, sensor orientation, and number of sensors. During installation, the light sensitivity settings need to be adjusted so that the desired lighting level is maintained in the space. Also, the system should be periodically tested for proper functionality.</description>
+  <modeler_description>Loops through all spaces in the model, calculates the daylighting area for each windows (defined as height of window head * width of window + 2ft on each side), and adds up the daylighting area for the whole space.  Then, if daylighting area > 250sf, installs a daylight sensor in the center of the window, at the head height of the window into the space, 3ft off the floor.  This sensor controls a fraction of the lighting equal to half of the daylighted area/space floor area.</modeler_description>
+  <provenances/>
+  <tags>
+    <tag>Electric Lighting.Electric Lighting Controls</tag>
+  </tags>
+  <attributes>
+    <attribute>
+      <name>Measure Type</name>
+      <value>ModelMeasure</value>
+      <datatype>string</datatype>
+    </attribute>
+    <attribute>
+      <name>Uses SketchUp API</name>
+      <value>false</value>
+      <datatype>boolean</datatype>
+    </attribute>
+  </attributes>
+  <files>
+    <file>
+      <filename>AddDaylightSensorstoControlLightinginPerimeterZones_Test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>C3791F22</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>1.2.3</identifier>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>4E128877</checksum>
+    </file>
+  </files>
+</measure>

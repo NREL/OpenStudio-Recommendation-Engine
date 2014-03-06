@@ -20,22 +20,38 @@
 module OpenStudio
   module RecommendationEngine
     class RecommendationEngine
-
       def initialize(model, path_to_measures)
         @model = model
         @path_to_measures = path_to_measures
+        
         init
       end
 
       def init
-        measure_checks = Dir.glob("#{path_to_measures}/**/recommendation.rb")
-
+        measure_checks = Dir.glob("#{@path_to_measures}/**/recommendation.rb")
+       
+        puts "List of measures: #{measure_checks.inspect}"
         results = []
-        measure_checks.each do |measure_check|
-          require measure_check
+        measure_checks.each do |measure|
+          require "#{File.expand_path(measure)}"
+
+          measure_class_name = File.basename(File.expand_path("../..",measure))
+          puts "measure class name is: #{measure_class_name}"
           
-          measure_check = AddDaylightSensorstoControlLightinginPerimeterZones::MeasureApplicabilityChecker.new(@model)
-          measure_check.check_applicability
+          m = measure_class_name.constantize.new
+          puts m.inspect
+          
+          # recommendation engine ?
+          #require "#{a.name}::MeasureApplciblitychere.new()."
+          
+          if @model
+            measure_check = Measure::MeasureApplicabilityChecker.new(@model)
+            measure_check.check_applicability  
+          else
+            raise "No model passed into the recommendation engine"
+          end
+          
+          
           results << measure_check.result
         end
 

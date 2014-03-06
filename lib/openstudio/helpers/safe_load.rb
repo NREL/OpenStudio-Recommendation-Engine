@@ -31,9 +31,9 @@ module OpenStudio
         model = model.get
       end
     else
-      puts "#{model_path_string} couldn't be found"
-      exit
+      raise "#{model_path_string} couldn't be found"
     end
     return model
   end
+  module_function :safe_load_model
 end
