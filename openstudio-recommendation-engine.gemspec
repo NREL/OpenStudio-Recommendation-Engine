@@ -1,7 +1,7 @@
 lib = File.expand_path('../lib/', __FILE__)
 $:.unshift lib unless $:.include?(lib)
 
-require "lib/openstudio/recommendation_engine/version"
+require "openstudio/recommendation_engine/version"
 
 Gem::Specification.new do |s|
   s.name = "openstudio-recommendation-engine"
@@ -14,7 +14,8 @@ Gem::Specification.new do |s|
   s.description = "This gem contains the framework needed to execute the recommendation engine on measures that have defined their recommendations."
   s.license = "LGPL"
 
-  #s.add_runtime_dependency("uuid")
+  s.add_runtime_dependency("parallel")
+  s.add_runtime_dependency("active_support")
 
   s.required_ruby_version = '>= 1.8.7'
   
@@ -22,5 +23,7 @@ Gem::Specification.new do |s|
   s.require_path = "lib"
 
 end
+
+
 
 
