@@ -27,7 +27,7 @@ module OpenStudio
 
       def check_measures
         measure_checks = Dir.glob("#{@path_to_measures}/**/recommendation.rb")
-       
+        
         applicable_measures = []
         debug_outputs = []
           
@@ -40,27 +40,103 @@ module OpenStudio
           measure = Object.const_get(measure_class_name).new
           
           if @model
-            results_json, debug_json = measure.check_applicability(@model)
-            if results_json
-              applicable_measures << results_json
+            results_hash, debug_hash = measure.check_applicability(@model)
+            if results_hash
+              applicable_measures << results_hash
             else
               puts "measure #{measure_class_name} not applicable"
             end
-            debug_outputs << debug_json
+            debug_outputs << debug_hash
           else
             raise "No model passed into the recommendation engine"
           end
           
         end
-
-        #convert the output to JSON
-        applicable_measures_json = JSON.pretty_generate(applicable_measures)
-        debug_output_json = JSON.pretty_generate(debug_outputs)
         
-        return [applicable_measures_json,debug_output_json]
+        return [applicable_measures,debug_outputs]
 
       end
 
+      # measures_hash looks like
+      # {
+        # "measure": {
+          # "uid": "123-fake-daylight-uid",
+          # "name": "AddEconomizer",
+          # "spaces": [
+            # "427_office_1_North Perimeter Space",
+            # "427_office_1_South Perimeter Space",
+            # "427_office_1_West Perimeter Space",
+            # "427_office_1_East Perimeter Space"
+          # ]
+          # "arguments": {
+            # "cost_per_thing":50,
+            # "input_2":true,
+          # }
+        # },
+        # "measure": {
+          # "uid": "123-fake-daylight-uid",
+          # "name": "AddDaylightControls",
+          # "spaces": [
+            # "427_office_1_North Perimeter Space",
+            # "427_office_1_South Perimeter Space",
+            # "427_office_1_West Perimeter Space",
+            # "427_office_1_East Perimeter Space"
+          # ]
+        # }
+      # }
+
+      def apply_measures(model, measures_hash)
+      
+        messages = {}
+            
+        #loop through each measure in the measures_hash
+        measures_hash.each do |m|
+          puts JSON.pretty_generate(m)
+          measure_name = m['measure']['name']
+          puts measure_name
+          messages[measure_name] = []
+          puts File.expand_path(measure_name)
+          require "#{@path_to_measures}/#{measure_name}/measure"
+          
+
+          #make os argument vector and assign values from measures_json
+          measure = Object.const_get(measure_name).new
+          
+          arguments = measure.arguments(model)
+          runner = OpenStudio::Ruleset::OSRunner.new
+          
+          argument_map = OpenStudio::Ruleset::OSArgumentMap.new
+          arguments.each do |arg|
+            argument_map[arg.name] = arg.clone
+          end
+          
+          if m['measure']['arguments']
+            m['measure']['arguments'].each do |arg_name, arg_val|
+              v = argument_map[arg_name]
+              raise "Could not find argument map in measure" if not v
+              value_set = v.setValue(arg_val)
+              raise "Could not set argument #{arg_name} of value #{arg_val} on model" unless value_set
+              argument_map[arg_name] = v.clone  
+            end
+          end 
+          
+          #run the measure
+          measure.run(model, runner, argument_map)
+          
+          #log the messages from when running the measure
+          result = runner.result
+          messages[measure_name] << result.initialCondition.get.logMessage if result.initialCondition.is_initialized
+          messages[measure_name] << result.finalCondition.get.logMessage if result.finalCondition.is_initialized
+          result.warnings.each { |w| messages[measure_name] << w.logMessage}
+          result.errors.each { |w| messages[measure_name] << w.logMessage}
+          result.info.each { |w| messages[measure_name] << w.logMessage}
+ 
+        end #next measure
+     
+        return model,messages
+        
+      end #apply_measures      
+       
     end
   end
 
