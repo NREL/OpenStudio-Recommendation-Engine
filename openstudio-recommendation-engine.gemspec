@@ -14,8 +14,13 @@ Gem::Specification.new do |s|
   s.description = "This gem contains the framework needed to execute the recommendation engine on measures that have defined their recommendations."
   s.license = "LGPL"
 
-  s.add_runtime_dependency("parallel")
+  s.add_runtime_dependency("rake", "~> 10.1.1")
+  s.add_runtime_dependency("colored")
+  s.add_runtime_dependency("parallel", "~> 1.19.0")
   s.add_runtime_dependency("json_pure")
+
+  s.add_development_dependency("rspec", "~> 2.12")
+  s.add_development_dependency("ci_reporter", "~> 1.9.0")
 
   s.required_ruby_version = '>= 1.8.7'
   
